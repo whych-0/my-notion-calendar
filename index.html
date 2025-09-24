@@ -1,35 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion Calendar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notionカレンダー</title>
 
-    <!-- Google Fontsを読み込む (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- FullCalendarのライブラリ -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-    
-    <!-- 独自のスタイルシート -->
-    <link rel="stylesheet" href="style.css">
+  <!-- Tailwind（UIひな型のクラスを流用） -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1a73e8",
+            "background-light": "#ffffff",
+            "background-dark": "#1f1f1f",
+            "text-light": "#3c4043",
+            "text-dark": "#e8eaed",
+            "border-light": "#e0e0e0",
+            "border-dark": "#3c4043",
+            "secondary-light": "#f1f3f4",
+            "secondary-dark": "#28292c",
+          },
+          borderRadius: { DEFAULT: "8px" },
+          fontFamily: { display: ["'Noto Sans JP'", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-    <!-- PWA化のためのマニフェスト -->
-    <link rel="manifest" href="manifest.json">
+  <!-- FullCalendar -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+  <!-- カスタムスタイル -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <header class="app-header">
-        <h1>My Notion Calendar</h1>
-    </header>
-    <main class="main-container">
-        <!-- カレンダーを表示する場所 -->
-        <div id='calendar'></div>
-    </main>
 
-    <!-- 独自のJavaScriptファイル -->
-    <script src="script.js"></script>
+<body class="bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark font-display">
+  <div class="flex h-screen">
+    <!-- 必要ならサイドバーを足せるが、まずはメインUIの洗練に集中 -->
+    <main class="flex-1 flex flex-col">
+      <!-- 外部ヘッダー（monthly/weekly の雰囲気を踏襲） -->
+      <header class="flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center">
+            <span class="material-icons text-primary text-3xl">calendar_month</span>
+            <h1 class="text-xl ml-2">カレンダー</h1>
+          </div>
+          <button id="btnToday" class="border border-border-light dark:border-border-dark rounded px-3 py-1.5 text-sm hover:bg-secondary-light dark:hover:bg-secondary-dark">
+            今日
+          </button>
+          <div class="flex items-center">
+            <button id="btnPrev" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <button id="btnNext" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
+              <span class="material-icons">chevron_right</span>
+            </button>
+          </div>
+          <h2 id="currentTitle" class="text-xl">----</h2>
+        </div>
+
+        <!-- ビュースイッチ（週/月）。日ビューを増やしたい場合はボタン追加だけでOK -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center border border-border-light dark:border-border-dark rounded overflow-hidden">
+            <button id="btnWeek" class="px-3 py-1.5 text-sm hover:bg-secondary-light dark:hover:bg-secondary-dark">週</button>
+            <div class="border-l border-border-light dark:border-border-dark h-5"></div>
+            <button id="btnMonth" class="px-3 py-1.5 text-sm bg-secondary-light dark:bg-secondary-dark font-medium">月</button>
+          </div>
+          <button class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
+            <span class="material-icons">apps</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- カレンダー本体 -->
+      <section class="flex-1 p-3">
+        <div id="calendar" class="rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- スクリプト（名称を d-script.js に統一） -->
+  <script src="script.js"></script>
 </body>
 </html>

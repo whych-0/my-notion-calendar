@@ -1,152 +1,75 @@
-/* --- 変数定義 --- */
+/* ベース（Tailwindの上に足す「微調整」） */
 :root {
-    --primary-color: #4285F4; /* Googleの青 */
-    --primary-bg-light: #e8f0fe; /* Googleの薄い青 */
-    --border-color: #e0e0e0; /* 薄いグレーの境界線 */
-    --bg-color: #f8f9fa; /* 背景色 */
-    --text-color: #3c4043; /* メインのテキスト色 */
-    --text-secondary-color: #5f6368; /* サブのテキスト色 */
-    --today-bg-color: #fff4e6; /* 今日の背景色 (Googleカレンダー風の黄色) */
+  --fc-border-color: #e0e0e0;
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: transparent;
+  --fc-today-bg-color: rgba(26, 115, 232, 0.08);
+  --fc-now-indicator-color: #ef4444; /* 赤ライン */
+  --fc-event-bg-color: #1a73e8;
+  --fc-event-border-color: #1a73e8;
+  --fc-event-text-color: #ffffff;
+  --fc-small-font-size: 0.8rem;
+  --fc-list-event-hover-bg-color: rgba(0,0,0,0.04);
 }
 
-/* --- 基本設定 --- */
-body {
-    margin: 0;
-    font-family: 'Inter', 'Noto Sans JP', sans-serif; /* フォントを指定 */
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    -webkit-font-smoothing: antialiased; /* フォントを滑らかに */
+html.dark {
+  --fc-border-color: #3c4043;
+  --fc-today-bg-color: rgba(26, 115, 232, 0.15);
+  --fc-list-event-hover-bg-color: rgba(255,255,255,0.05);
 }
 
-/* --- ヘッダー --- */
-.app-header {
-    background-color: white;
-    padding: 12px 24px;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    text-align: center;
-}
-
-.app-header h1 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: var(--text-secondary-color);
-    margin: 0;
-}
-
-/* --- メインコンテンツ --- */
-.main-container {
-    padding: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* --- FullCalendarのスタイル上書き --- */
-
-/* カレンダー全体 */
+/* FullCalendar の表部分の境界線やフォントを UI ひな型に寄せる */
 .fc {
-    border: none; /* デフォルトの枠線を消す */
+  font-family: 'Noto Sans JP', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fc-border-color: var(--fc-border-color);
 }
 
-/* ヘッダーツールバー */
-.fc-header-toolbar {
-    margin-bottom: 1.5em !important;
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid table,
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: var(--fc-border-color);
 }
 
-/* ボタン共通スタイル */
-.fc-button {
-    background-color: white !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-secondary-color) !important;
-    text-transform: capitalize !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+.fc .fc-col-header-cell-cushion {
+  padding: 6px 0;
+  font-weight: 500;
+  color: #6b7280; /* gray-500 */
 }
 
-.fc-button:hover {
-    background-color: #f1f3f4 !important; /* ホバー時の背景色 */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+html.dark .fc .fc-col-header-cell-cushion {
+  color: #9ca3af; /* gray-400 */
 }
 
-/* 「今日」ボタンの特別スタイル */
-.fc-today-button {
-    background-color: var(--primary-color) !important;
-    color: white !important;
-    border-color: var(--primary-color) !important;
-}
-.fc-today-button:hover {
-    background-color: #1a73e8 !important; /* ホバー時の少し濃い青 */
-}
-.fc-today-button:disabled {
-    background-color: #f1f3f4 !important;
-    border-color: var(--border-color) !important;
+/* 今日のハイライトを控えめなブルーに */
+.fc .fc-daygrid-day.fc-day-today,
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: var(--fc-today-bg-color);
 }
 
-/* アクティブなビューボタン (月/週) */
-.fc-button-primary:not(:disabled).fc-button-active {
-    background-color: var(--primary-bg-light) !important;
-    color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-    box-shadow: none !important;
+/* 週ビューのスロット高さをやや広めに（weekly.htmlに近づける） */
+.fc-timegrid-slot {
+  height: 48px;
 }
 
-/* カレンダーのタイトル (例: 2025年9月) */
-.fc-toolbar-title {
-    font-size: 1.5em !important;
-    font-weight: 500;
+/* イベントの丸角と行間 */
+.fc .fc-event {
+  border: none;
+  border-radius: 6px;
+  line-height: 1.2;
 }
 
-/* 曜日ヘッダー (日, 月, 火...) */
-.fc-col-header-cell-cushion {
-    text-decoration: none !important;
-    color: var(--text-secondary-color);
-    font-size: 0.8em;
-    font-weight: 500;
+/* now インジケータ（赤ライン）を視認性よく */
+.fc .fc-timegrid-now-indicator-line {
+  border-top-width: 2px;
 }
 
-/* 日付の数字 */
-.fc-daygrid-day-number {
-    text-decoration: none !important;
-    color: var(--text-secondary-color);
-    padding: 8px;
+/* 月ビューでのイベント「…+件」を読みやすく */
+.fc .fc-daygrid-more-link {
+  font-weight: 500;
 }
 
-/* 「今日」の日付セルのスタイル */
-.fc-day-today {
-    background-color: var(--today-bg-color) !important;
-}
-
-.fc-day-today .fc-daygrid-day-number {
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin-top: 4px;
-    margin-left: 4px;
-}
-
-/* イベントのスタイル */
-.fc-event {
-    border-radius: 4px !important;
-    padding: 2px 4px !important;
-    cursor: pointer;
-    font-weight: 500;
-    transition: opacity 0.2s ease;
-}
-
-.fc-event:hover {
-    opacity: 0.8;
-}
-
-/* カレンダー本体の枠線 */
-.fc-view, .fc-scrollgrid {
-    border: 1px solid var(--border-color) !important;
-    border-radius: 8px;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
+/* スクロールバーの視認性（オプション） */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 8px; }
+html.dark ::-webkit-scrollbar-thumb { background: #4b5563; }
