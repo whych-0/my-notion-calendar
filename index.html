@@ -2,33 +2,18 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion Calendar</title>
-
-    <!-- Google Fontsを読み込む (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- FullCalendarのライブラリ -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-    
-    <!-- 独自のスタイルシート -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- PWA化のためのマニフェスト -->
     <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notionカレンダー</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FullCalendarのライブラリを読み込む -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 </head>
 <body>
-    <header class="app-header">
-        <h1>My Notion Calendar</h1>
-    </header>
-    <main class="main-container">
-        <!-- カレンダーを表示する場所 -->
-        <div id='calendar'></div>
-    </main>
+    <!-- カレンダーを表示する場所 -->
+    <div id='calendar'></div>
 
-    <!-- 独自のJavaScriptファイル -->
+    <!-- 自分のJavaScriptファイルを読み込む -->
     <script src="script.js"></script>
 </body>
 </html>
