@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         events: async function(fetchInfo, successCallback, failureCallback) {
             try {
                 // 【重要】ここにあなたのGASのウェブアプリURLを貼り付けてください
-                const GAS_URL = 'https://script.google.com/macros/s/xxxxxxxx/exec'; // ← 必ず書き換える！
+                const GAS_URL = 'https://script.google.com/macros/s/AKfycbwCfcnmvNtqKOGSNLqv7EcUq3A0wXcaeHJhgGT17vJX6y3jNBhk9zPcS84bTP4LbA7Gsw/exec'; // ← 必ず書き換える！
                 
                 const response = await fetch(GAS_URL);
                 if (!response.ok) {
@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // NotionのデータをFullCalendarの形式に変換
                 const events = data.results.map(page => {
                     // ※※※ ここのプロパティ名はあなたのNotionデータベースに合わせて変更してください ※※※
-                    const title = page.properties.名前?.title[0]?.plain_text || '（無題）';
-                    const dateInfo = page.properties.日付?.date;
+                    const title = page.properties.タイトル?.title[0]?.plain_text || '（無題）';
+                    const dateInfo = page.properties.実行日?.date;
 
                     if (!dateInfo || !dateInfo.start) return null;
 
