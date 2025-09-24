@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         events: async function(fetchInfo, successCallback, failureCallback) {
             try {
                 // 【重要】ここにあなたのGASのウェブアプリURLを貼り付けてください
-                const GAS_URL = 'hhttps://script.google.com/macros/s/AKfycbwCfcnmvNtqKOGSNLqv7EcUq3A0wXcaeHJhgGT17vJX6y3jNBhk9zPcS84bTP4LbA7Gsw/exec'; // ← 必ず書き換える！
+                const GAS_URL = 'https://script.google.com/macros/s/AKfycbwCfcnmvNtqKOGSNLqv7EcUq3A0wXcaeHJhgGT17vJX6y3jNBhk9zPcS84bTP4LbA7Gsw/exec'; // ← 必ず書き換える！
                 
                 const response = await fetch(GAS_URL);
                 if (!response.ok) {
