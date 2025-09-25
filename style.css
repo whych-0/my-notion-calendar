@@ -1,29 +1,35 @@
-/* ベース（Tailwindの上に足す「微調整」） */
+/* ベース（FullCalendarの色や線） */
 :root {
-  --fc-border-color: #e0e0e0;
+  --fc-border-color: #e6e6e6;
   --fc-page-bg-color: transparent;
   --fc-neutral-bg-color: transparent;
-  --fc-today-bg-color: rgba(26, 115, 232, 0.08);
-  --fc-now-indicator-color: #ef4444; /* 赤ライン */
+  /* セル全面の today 背景は使わない（ピルに置き換えるため透明に） */
+  --fc-today-bg-color: transparent;
+
+  --fc-now-indicator-color: #ef4444; /* 現在時刻の赤ライン */
   --fc-event-bg-color: #1a73e8;
   --fc-event-border-color: #1a73e8;
   --fc-event-text-color: #ffffff;
   --fc-small-font-size: 0.8rem;
-  --fc-list-event-hover-bg-color: rgba(0,0,0,0.04);
+
+  --gridline-color: #ececec;      /* 週ビューの薄い罫線 */
+  --gridline-color-dark: #3c4043; /* ダーク */
+  --today-pill-bg: rgba(26,115,232,0.18);
 }
 
 html.dark {
   --fc-border-color: #3c4043;
-  --fc-today-bg-color: rgba(26, 115, 232, 0.15);
-  --fc-list-event-hover-bg-color: rgba(255,255,255,0.05);
+  --gridline-color: #3c4043;
+  --today-pill-bg: rgba(26,115,232,0.28);
 }
 
-/* FullCalendar の表部分の境界線やフォントを UI ひな型に寄せる */
+/* FullCalendar 表の見た目 */
 .fc {
   font-family: 'Noto Sans JP', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --fc-border-color: var(--fc-border-color);
 }
 
+/* 枠線の色統一（薄め） */
 .fc .fc-scrollgrid,
 .fc .fc-scrollgrid table,
 .fc .fc-scrollgrid td,
@@ -31,45 +37,105 @@ html.dark {
   border-color: var(--fc-border-color);
 }
 
+/* 列ヘッダ（曜日）のベース */
 .fc .fc-col-header-cell-cushion {
   padding: 6px 0;
   font-weight: 500;
   color: #6b7280; /* gray-500 */
+  text-decoration: none;
+}
+html.dark .fc .fc-col-header-cell-cushion { color: #9ca3af; }
+
+/* ============ 月画面：日付数字を中央寄せ、ピルで今日のみ強調 ============ */
+
+/* 月セルの「数字」エリアを中央寄せ */
+.fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 4px;
 }
 
-html.dark .fc .fc-col-header-cell-cushion {
-  color: #9ca3af; /* gray-400 */
-}
-
-/* 今日のハイライトを控えめなブルーに */
-.fc .fc-daygrid-day.fc-day-today,
-.fc .fc-timegrid-col.fc-day-today {
-  background-color: var(--fc-today-bg-color);
-}
-
-/* 週ビューのスロット高さをやや広めに（weekly.htmlに近づける） */
-.fc-timegrid-slot {
-  height: 48px;
-}
-
-/* イベントの丸角と行間 */
-.fc .fc-event {
-  border: none;
-  border-radius: 6px;
+/* 月セルの数字（常に数字のみ。ピルは today のみ背景付与） */
+.fc .fc-daygrid-day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;          /* 楕円（ピル）っぽい余白 */
+  border-radius: 999px;        /* 楕円 */
+  text-decoration: none;
+  font-weight: 600;
   line-height: 1.2;
 }
 
-/* now インジケータ（赤ライン）を視認性よく */
-.fc .fc-timegrid-now-indicator-line {
-  border-top-width: 2px;
+/* 今日（セル全体ではなく数字の周囲だけ） */
+.fc .is-today-number {
+  background: var(--today-pill-bg);
 }
 
-/* 月ビューでのイベント「…+件」を読みやすく */
-.fc .fc-daygrid-more-link {
-  font-weight: 500;
+/* ============ 週画面：列ヘッダに「曜日（小）／日（大）」の縦並び ============ */
+
+/* 縦スタック用の容器 */
+.fc .fc-wkhead { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+/* 曜日（小さめ） */
+.fc .fc-wkhead-dow {
+  font-size: 0.82rem;
+  line-height: 1;
+  opacity: 0.9;
 }
 
-/* スクロールバーの視認性（オプション） */
+/* 日（大きめ、常にピル形の余白を確保。背景は today のみ） */
+.fc .fc-wkhead-dom .fc-oval {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+/* 週ヘッダの今日ピル */
+.fc .is-today-header .fc-wkhead-dom .fc-oval {
+  background: var(--today-pill-bg);
+}
+
+/* ============ 週画面：薄い時間グリッド / 終日行はグリッドなし ============ */
+
+/* 時間スロットの高さ（視認性） */
+.fc-timegrid-slot { height: 48px; }
+
+/* 時間スロットの罫線を薄く */
+.fc .fc-timegrid-slot,
+.fc .fc-timegrid-axis,
+.fc .fc-timegrid-divider,
+.fc .fc-timegrid-col,
+.fc .fc-timegrid-slot-minor {
+  border-color: var(--gridline-color);
+}
+
+/* 終日セクションの表層はグリッド線を消し、フラットに */
+.fc .fc-timegrid-allday .fc-daygrid-body,
+.fc .fc-timegrid-allday .fc-daygrid-body table,
+.fc .fc-timegrid-allday .fc-daygrid-body tr,
+.fc .fc-timegrid-allday .fc-daygrid-body td,
+.fc .fc-timegrid-allday .fc-daygrid-body th {
+  border: none !important;
+  background: transparent;
+}
+
+/* 「all-day/終日」のラベルを非表示（週ビュー左の軸） */
+.fc .fc-timegrid-allday .fc-timegrid-axis-cushion { display: none; }
+
+/* now インジケータ（赤ライン） */
+.fc .fc-timegrid-now-indicator-line { border-top-width: 2px; }
+
+/* 月ビューの「…+件」リンクを読みやすく */
+.fc .fc-daygrid-more-link { font-weight: 500; }
+
+/* スクロールバー（任意） */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 8px; }
 html.dark ::-webkit-scrollbar-thumb { background: #4b5563; }

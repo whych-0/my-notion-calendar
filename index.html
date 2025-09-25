@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Notionカレンダー</title>
 
-  <!-- Tailwind（UIひな型のクラスを流用） -->
+  <!-- Tailwind（UI強化に利用） -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <script>
     tailwind.config = {
@@ -41,9 +41,8 @@
 
 <body class="bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark font-display">
   <div class="flex h-screen">
-    <!-- 必要ならサイドバーを足せるが、まずはメインUIの洗練に集中 -->
     <main class="flex-1 flex flex-col">
-      <!-- 外部ヘッダー（monthly/weekly の雰囲気を踏襲） -->
+      <!-- 外部ヘッダー -->
       <header class="flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark">
         <div class="flex items-center gap-3">
           <div class="flex items-center">
@@ -54,26 +53,22 @@
             今日
           </button>
           <div class="flex items-center">
-            <button id="btnPrev" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
+            <button id="btnPrev" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark" aria-label="前の期間">
               <span class="material-icons">chevron_left</span>
             </button>
-            <button id="btnNext" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
+            <button id="btnNext" class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark" aria-label="次の期間">
               <span class="material-icons">chevron_right</span>
             </button>
           </div>
           <h2 id="currentTitle" class="text-xl">----</h2>
         </div>
 
-        <!-- ビュースイッチ（週/月）。日ビューを増やしたい場合はボタン追加だけでOK -->
         <div class="flex items-center gap-2">
           <div class="flex items-center border border-border-light dark:border-border-dark rounded overflow-hidden">
             <button id="btnWeek" class="px-3 py-1.5 text-sm hover:bg-secondary-light dark:hover:bg-secondary-dark">週</button>
             <div class="border-l border-border-light dark:border-border-dark h-5"></div>
             <button id="btnMonth" class="px-3 py-1.5 text-sm bg-secondary-light dark:bg-secondary-dark font-medium">月</button>
           </div>
-          <button class="p-2 rounded-full hover:bg-secondary-light dark:hover:bg-secondary-dark">
-            <span class="material-icons">apps</span>
-          </button>
         </div>
       </header>
 
@@ -84,7 +79,7 @@
     </main>
   </div>
 
-  <!-- スクリプト（名称を d-script.js に統一） -->
+  <!-- スクリプト -->
   <script src="script.js"></script>
 </body>
 </html>

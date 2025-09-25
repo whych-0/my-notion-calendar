@@ -10,21 +10,27 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnWeek = document.getElementById("btnWeek");
   const btnMonth = document.getElementById("btnMonth");
 
+  const isSameYMD = (a, b) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
   // ====== FullCalendar 初期化 ======
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",           // 既定＝月
-    headerToolbar: false,                   // 内蔵ヘッダーは使わない
+    headerToolbar: false,
     height: "100%",
     expandRows: true,
     stickyHeaderDates: true,
-    firstDay: 0,                            // 日曜開始（必要なら 1=月曜）
+    firstDay: 0,                            // 0=日曜開始
     navLinks: true,
-    nowIndicator: true,                     // 週ビューで「現在時刻」赤ライン
-    slotMinTime: "07:00:00",                // 週ビューの開始時刻（UIの例に合わせる）
+    nowIndicator: true,                     // 週ビューの現在時刻赤ライン
+    slotMinTime: "07:00:00",
     slotMaxTime: "23:00:00",
     slotDuration: "01:00:00",
     slotLabelInterval: "01:00",
-    dayMaxEventRows: 3,                     // 月ビューでの折りたたみ
+    slotLabelFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+    dayMaxEventRows: 3,
     displayEventTime: true,
     eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
 
@@ -32,17 +38,34 @@ document.addEventListener("DOMContentLoaded", function () {
     locale: "ja",
     buttonText: { today: "今日", month: "月", week: "週" },
 
+    // ====== 週ビューのヘッダ（曜日／日を縦並び・月は出さない） ======
+    views: {
+      timeGridWeek: {
+        dayHeaderContent: (args) => {
+          const d = args.date;
+          const dow = d.toLocaleDateString("ja-JP", { weekday: "short" }); // 月, 火, ...
+          const dom = d.getDate(); // 1..31
+          return {
+            html: `
+              <div class="fc-wkhead">
+                <div class="fc-wkhead-dow">${dow}</div>
+                <div class="fc-wkhead-dom"><span class="fc-oval">${dom}</span></div>
+              </div>
+            `
+          };
+        },
+        // all-day ラベルを消す
+        allDayText: ""
+      }
+    },
+
     // ====== イベント取得（GAS→Notion） ======
     events: async function (fetchInfo, success, failure) {
       try {
-        // 既存の GAS Web App URL をそのまま利用
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwCfcnmvNtqKOGSNLqv7EcUq3A0wXcaeHJhgGT17vJX6y3jNBhk9zPcS84bTP4LbA7Gsw/exec";
-
         const res = await fetch(GAS_URL);
         const data = await res.json();
 
-        // 既存のマッピングを維持（タイトル/実行日）
-        // ※ NotionページのURLがある場合は event.url として開けるように付与
         const events = (data.results || [])
           .map((page) => {
             const title = page?.properties?.タイトル?.title?.[0]?.plain_text || "無題";
@@ -51,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return {
               title,
               start: date,
-              url: page?.url || undefined,
+              url: page?.url || undefined
             };
           })
           .filter(Boolean);
@@ -63,20 +86,35 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     },
 
-    // ====== 装飾：monthly/weekly の雰囲気に寄せる ======
-    eventDidMount: ({ el, event }) => {
-      // 丸角とフォントを強め、ひな型の “青ピル” に寄せた外観
+    // ====== イベントの見た目（青ピル風） ======
+    eventDidMount: ({ el }) => {
       el.classList.add(
         "rounded", "px-1", "py-0.5",
         "text-white", "bg-primary",
         "dark:text-black"
       );
-      // 月ビューでの1行要約を保ちつつ、タイトルを強調
       const titleElt = el.querySelector(".fc-event-title");
       if (titleElt) titleElt.classList.add("font-medium");
     },
 
-    // ヘッダーのタイトルを制御（外部ヘッダー）
+    // ====== 月セル：数字中央寄せ & 今日だけ楕円ハイライト ======
+    dayCellDidMount: (info) => {
+      // 月ビューのセル先頭（数字）の中央寄せは CSS で制御
+      // 「今日」だけ数字の周囲にピルを付ける
+      if (info.isToday) {
+        const a = info.el.querySelector(".fc-daygrid-day-number");
+        if (a) a.classList.add("is-today-number");
+      }
+    },
+
+    // ====== 週ヘッダ：今日だけ楕円ハイライト ======
+    dayHeaderDidMount: (info) => {
+      if (isSameYMD(info.date, new Date())) {
+        info.el.classList.add("is-today-header");
+      }
+    },
+
+    // 外部ヘッダーのタイトル更新
     datesSet: () => updateExternalTitle()
   });
 
@@ -85,9 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ====== 外部ヘッダーの制御 ======
   function updateExternalTitle() {
     const d = calendar.getDate();
-    // 例）2025年 9月
-    titleEl.textContent = d.toLocaleDateString("ja-JP", { year: "numeric", month: "long" });
-    // ビューボタンの見た目更新
+    titleEl.textContent = d.toLocaleDateString("ja-JP", { year: "numeric", month: "long" }); // 例: 2025年9月
     const isMonth = calendar.view.type === "dayGridMonth";
     btnMonth.classList.toggle("bg-secondary-light", isMonth);
     btnMonth.classList.toggle("dark:bg-secondary-dark", isMonth);
@@ -95,28 +131,15 @@ document.addEventListener("DOMContentLoaded", function () {
     btnWeek.classList.toggle("dark:bg-secondary-dark", !isMonth);
   }
 
-  btnPrev.addEventListener("click", () => {
-    calendar.prev();
-    updateExternalTitle();
-  });
-
-  btnNext.addEventListener("click", () => {
-    calendar.next();
-    updateExternalTitle();
-  });
-
-  btnToday.addEventListener("click", () => {
-    calendar.today();
-    updateExternalTitle();
-  });
-
+  btnPrev.addEventListener("click", () => { calendar.prev(); updateExternalTitle(); });
+  btnNext.addEventListener("click", () => { calendar.next(); updateExternalTitle(); });
+  btnToday.addEventListener("click", () => { calendar.today(); updateExternalTitle(); });
   btnWeek.addEventListener("click", () => {
     if (calendar.view.type !== "timeGridWeek") {
       calendar.changeView("timeGridWeek");
       updateExternalTitle();
     }
   });
-
   btnMonth.addEventListener("click", () => {
     if (calendar.view.type !== "dayGridMonth") {
       calendar.changeView("dayGridMonth");
